@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
+
 app = Flask(__name__)
 app.secret_key = 'replace-this-with-a-secret-key'
-user ={}
-app.route('/signup', methods=['GET', 'POST'])
-def signup():
+
+users = {}  # Temporary in-memory user store
+
 def init_db():
     conn = sqlite3.connect('school_fees.db')
     c = conn.cursor()
@@ -18,19 +19,24 @@ def init_db():
     conn.commit()
     conn.close()
 
-    conn = sqlite3.connect('school_fees.db')
-    c = conn.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS students (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    student_class TEXT NOT NULL,
-                    total_fees REAL NOT NULL,
-                    amount_paid REAL NOT NULL DEFAULT 0
-                )""")
-    conn.commit()
-    conn.close()
-
 init_db()
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        if username in users:
+            flash('User already exists. Please log in.')
+            return redirect(url_for('login'))
+
+        users[username] = password
+        session['user'] = username
+        return redirect(url_for('dashboard'))
+
+    return render_template('signup.html')
+
 
 @app.route('/')
 def dashboard():
@@ -84,7 +90,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == 'admin' and password == 'admin123':
+        if username in users and users[username] == password:
             session['user'] = username
             return redirect(url_for('dashboard'))
         else:
@@ -100,18 +106,7 @@ def logout():
 def require_login():
     protected = ['dashboard', 'add_student', 'update_payment']
     if request.endpoint in protected and 'user' not in session:
-        return redirect(url_for('login'))
-  @app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username in users:
-            return "User already exists"
-        users[username] = password
-        return redirect(url_for('login'))
-    return render_template('signup.html')return render_template('Signup.html')
-  # <--- this must match the file name
+        return redirect(url_for('signup'))
+
 if __name__ == '__main__':
     app.run(debug=True)
-
