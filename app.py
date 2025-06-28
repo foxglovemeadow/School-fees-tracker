@@ -104,9 +104,9 @@ def logout():
 
 @app.before_request
 def require_login():
-    protected = ['dashboard', 'add_student', 'update_payment']
-    if request.endpoint in protected and 'user' not in session:
-        return redirect(url_for('signup'))
+    allowed = ['login', 'signup', 'static']
+    if request.endpoint not in allowed and 'user' not in session:
+        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
