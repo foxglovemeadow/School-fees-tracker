@@ -91,3 +91,13 @@ def require_login():
 
 if __name__ == '__main__':
     app.run(debug=True)
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if username in users:
+            return "User already exists"
+        users[username] = password
+        return redirect(url_for('login'))
+    return render_template('signup.html')  # <--- this must match the file name
