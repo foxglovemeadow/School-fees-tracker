@@ -18,6 +18,18 @@ def init_db():
     conn.commit()
     conn.close()
 
+    conn = sqlite3.connect('school_fees.db')
+    c = conn.cursor()
+    c.execute("""CREATE TABLE IF NOT EXISTS students (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    student_class TEXT NOT NULL,
+                    total_fees REAL NOT NULL,
+                    amount_paid REAL NOT NULL DEFAULT 0
+                )""")
+    conn.commit()
+    conn.close()
+
 init_db()
 
 @app.route('/')
