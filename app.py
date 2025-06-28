@@ -88,10 +88,7 @@ def require_login():
     protected = ['dashboard', 'add_student', 'update_payment']
     if request.endpoint in protected and 'user' not in session:
         return redirect(url_for('login'))
-
-if __name__ == '__main__':
-    app.run(debug=True)
-@app.route('/signup', methods=['GET', 'POST'])
+  @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form['username']
@@ -100,4 +97,8 @@ def signup():
             return "User already exists"
         users[username] = password
         return redirect(url_for('login'))
-    return render_template('signup.html')  # <--- this must match the file name
+    return render_template('signup.html')return render_template('Signup.html')
+  # <--- this must match the file name
+if __name__ == '__main__':
+    app.run(debug=True)
+
