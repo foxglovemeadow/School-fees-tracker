@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
-
 app = Flask(__name__)
 app.secret_key = 'replace-this-with-a-secret-key'
-
+user ={}
+app.route('/signup', methods=['GET', 'POST'])
+def signup():
 def init_db():
     conn = sqlite3.connect('school_fees.db')
     c = conn.cursor()
